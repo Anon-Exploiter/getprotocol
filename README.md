@@ -24,7 +24,7 @@ OR
 git clone https://github.com/Anon-Exploiter/getprotocol/
 cd getprotocol/
 python3 setup.py build 
-python3 setup.py install
+python3 setup.py install --user
 ```
 
 ### Usage
