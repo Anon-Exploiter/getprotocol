@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-
 import requests
 import sys
+import argparse
 
 
 class FindProtocol:
@@ -11,11 +11,13 @@ class FindProtocol:
     and what we should use going forward with other tools
     '''
 
-    def __init__(self, host):
-        self.host = host
+    def __init__(self, host, quiet):
         self.http = False
         self.https = False
         self.isHostDown = False
+
+        self.host = host
+        self.quiet = quiet
 
 
     def stripEveryThing(self):
@@ -100,18 +102,40 @@ class FindProtocol:
 
         else:
             hostname    = self.stripEveryThing()
-            return(f'{hostname}:HostDownOrInvalid')
+            
+            if self.quiet != True:
+                return(f'{hostname}:HostDownOrInvalid')
+
+
+def addArguments():
+    '''
+    Args
+    '''
+
+    parser = argparse.ArgumentParser(description='')
+    parser._optionals.title = "Basic Help"
+
+    opts = parser.add_argument_group(f'Script Arguments')
+    opts.add_argument('-t', '--target',  action="store",      dest="host",  default=False, help='Host to check protocol for')
+
+    others = parser.add_argument_group(f'Optional Arguments')
+    others.add_argument('-q', '--quiet', action="store_true", dest="quiet", default=False, help='To not print if host is down')
+
+    args = parser.parse_args()
+    return(args, parser)
 
 
 def main():
-    if len(sys.argv) == 2:
-        host = sys.argv[1]
-        finalHost = FindProtocol(host)
+    args, parser = addArguments()
+
+    if args.host:
+        host = args.host
+        finalHost = FindProtocol(host, args.quiet)
 
         hostName  = finalHost.getFinalURL()
         print(hostName)
 
-    else:
+    elif not args.host:
         urls = []
         userInput = sys.stdin
 
@@ -121,9 +145,13 @@ def main():
                 urls.append(lines)
 
         for hosts in urls:
-            finalHost = FindProtocol(hosts)
+            finalHost = FindProtocol(hosts, args.quiet)
             hostName  = finalHost.getFinalURL()
-            print(hostName)
+            if hostName: print(hostName)
+
+    else:
+    	parser.print_help()
+    	exit()
 
 
 if __name__ == '__main__':

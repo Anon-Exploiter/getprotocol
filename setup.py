@@ -4,7 +4,7 @@ with open('README.md') as f:
     long_description = f.read().strip()
 
 setup(name='getprotocol',
-	version='0.1',
+	version='0.2',
 	description='Simple script to get if host is using http or https.',
 	long_description=long_description,
 	long_description_content_type='text/markdown',  # This is important!
